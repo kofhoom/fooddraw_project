@@ -74,7 +74,7 @@ menuListAddBtn.addEventListener("click", (event) => {
           ? `<span>를 주문 할 사람은 <b>${newArray.address}</b> 입니다.</span>`
           : ""
       }
-      <img class='x-del-image' onclick='listDel(this,${countListNum})' src='/image/xicon.png' />          
+      <img class='x-del-image' onclick='listDel(this,${countListNum})' src='./image/xicon.png' />          
       </li>`
     );
     valueTitle.value = "";
