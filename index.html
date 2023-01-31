@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/css/common.css">
+    <title>점심추천기</title>
+</head>
+<body>
+    <div class="wrap">
+        <div class="asd">
+            <p class="title">점심 추첨기v1.4</p>
+            <div class="required">
+                빵셔틀 MODE
+                <label>
+                    <input type="checkbox" name="toggle" class="toggleClick" checked="">
+                    <span class="toggles"></span>
+                </label>
+            </div>
+        </div>
+        <div class="button-wrap">
+            <button id="add-list-open">시작</button>
+        </div>
+        <div class="add-list">
+            <ul class="add-list-ul">
+            </ul>
+        </div>
+        <div class="result-wrap">
+            <p class="select-important-text">선택될 음식은...</p>
+            <div class="menu-list-title"></div>
+            <p class="menu-list-address"></p>
+            <div class="rewrap">
+                <button id="select-button">추첨</button>
+            </div>
+            <button class="reset">처음으로</button>
+
+        </div>
+        <div class="menu-list-wrap">
+            <ul class="menu-list-ul">
+                <li class="menu-list-li"><label for="">음식 이름:</label> <input type="text" id="name"
+                        placeholder="음식 이름을 입력하세요" /></li>
+                <li class="menu-list-li pp"><label for="">주문할 사람:</label> <input type="text" id="address"
+                        placeholder="주문할 사람을 입력하세요" /></li>
+            </ul>
+            <button id="menu-list-add-btn">추가</button>
+            <button id="menu-list-add-btn-start">추첨시작</button>
+        </div>
+    </div>
+</body>
+<script src="/js/js.js"></script>
+</html>
