@@ -21,9 +21,13 @@ let globalFrame;
 let listDataResult = [];
 let newArray;
 
-let checkState = false;
+toggleCheck.checked = false; //기본 체크상태 설정
 
-toggleCheck.checked = false;
+// 시작버튼 클릭시
+addListOpen.addEventListener("click", (event) => {
+  menuListWrap.classList.add("active");
+  buttonWrap.style.display = "none";
+});
 
 toggleCheck.addEventListener("click", () => {
   if (toggleCheck.checked) {
@@ -60,6 +64,7 @@ menuListAddBtn.addEventListener("click", (event) => {
       title: valueTitle.value,
       address: valueAddress.value,
     };
+
     listDataResult.push(newArray);
     resultDatas(listDataResult);
 
@@ -96,6 +101,7 @@ let callback = function () {
   }
 };
 
+// 추첨버튼 클릭시
 selButtons.addEventListener("click", (event) => {
   const targets = event.target;
   const buttonValueText = targets.innerHTML;
@@ -118,11 +124,6 @@ selButtons.addEventListener("click", (event) => {
   }
 });
 
-addListOpen.addEventListener("click", (event) => {
-  menuListWrap.classList.toggle("active");
-  buttonWrap.style.display = "none";
-});
-
 /**
  * 리스트 삭제
  * @param {Number} targetIndex
@@ -139,10 +140,10 @@ function listDel(targetIndex) {
 function resultDatas(arrs) {
   let div = "";
   for (const dataList in arrs) {
-    div += `<li class='list-li'><span class='list-li-num'>${
-      Number(dataList) + 1
-    }.</span>
-              <span class='text-box'><b>${arrs[dataList].title}</b></span>${
+    div += `<li class='list-li'>
+    <span class='list-li-num'>${Number(dataList) + 1}.</span>
+    <span class='text-box'><b>${arrs[dataList].title}</b></span>
+    ${
       toggleCheck.checked
         ? `<span>를 주문 할 사람은 <b>${arrs[dataList].address}</b> 입니다.</span>`
         : ""
