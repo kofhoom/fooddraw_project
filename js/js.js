@@ -19,7 +19,7 @@ let start = 0;
 let globalFrame;
 
 let listDataResult = [];
-let newArray;
+let newObj;
 
 toggleCheck.checked = false; //기본 체크상태 설정
 
@@ -60,12 +60,12 @@ menuListAddBtn.addEventListener("click", (event) => {
   } else {
     addList.style.display = "block";
 
-    newArray = {
+    newObj = {
       title: valueTitle.value,
       address: valueAddress.value,
     };
 
-    listDataResult.push(newArray);
+    listDataResult.push(newObj);
     resultDatas(listDataResult);
 
     valueTitle.value = "";
@@ -73,9 +73,7 @@ menuListAddBtn.addEventListener("click", (event) => {
   }
 });
 
-let selectList;
-let selectListTargetText;
-
+// 추첨 시작 버튼 누를시
 startBtn.addEventListener("click", () => {
   if (listDataResult.length < 2) {
     alert("음식을 1개 이상 등록해주세요");
@@ -87,6 +85,10 @@ startBtn.addEventListener("click", () => {
     requestAnimationFrame(callback);
   }
 });
+
+// 렌덤 추천 기능
+let selectList;
+let selectListTargetText;
 
 let callback = function () {
   start++;
