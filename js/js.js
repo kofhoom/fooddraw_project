@@ -154,7 +154,7 @@ function listDel(targetList, idx) {
   targetList.closest("li").remove();
   const listlinum = document.querySelectorAll(".list-li-num");
   for (let i = 0; i < listlinum.length; i++) {
-    listlinum[i].innerHTML = i + 1;
+    listlinum[i].innerHTML = `${i + 1}. `;
   }
   countListNum--;
 }
