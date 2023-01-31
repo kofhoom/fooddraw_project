@@ -264,15 +264,36 @@ function keywordSearch(keyword) {
       // 마커와 검색결과 항목에 mouseover 했을때
       // 해당 장소에 인포윈도우에 장소명을 표시
       // mouseout 했을 때는 인포윈도우를 닫습니다
-      (function (marker, title) {
-        kakao.maps.event.addListener(marker, "mouseover", function () {
-          displayInfowindow(marker, title);
-        });
 
-        kakao.maps.event.addListener(marker, "mouseout", function () {
-          infowindow.close();
-        });
-      })(marker, places[i].place_name);
+      var varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
+
+      if (
+        varUA.indexOf("iphone") > -1 ||
+        varUA.indexOf("ipad") > -1 ||
+        varUA.indexOf("ipod") > -1
+      ) {
+        (function (marker, title) {
+          kakao.maps.event.addListener(marker, "touchstart", function () {
+            displayInfowindow(marker, title);
+          });
+
+          kakao.maps.event.addListener(marker, "touchend", function () {
+            infowindow.close();
+          });
+        })(marker, places[i].place_name);
+        return "ios";
+      } else {
+        (function (marker, title) {
+          kakao.maps.event.addListener(marker, "mouseover", function () {
+            displayInfowindow(marker, title);
+          });
+
+          kakao.maps.event.addListener(marker, "mouseout", function () {
+            infowindow.close();
+          });
+        })(marker, places[i].place_name);
+        return "other";
+      }
     }
 
     // 검색결과 항목들을 검색결과 목록 Element에 추가
