@@ -16,11 +16,7 @@ const reset = document.querySelector(".reset");
 
 let end = 5;
 let start = 0;
-let countListNum = 0;
 let globalFrame;
-
-// let startNum = 0;
-// let lastNum = 3;
 
 let listDataResult = [];
 let newArray;
@@ -36,6 +32,8 @@ toggleCheck.addEventListener("click", () => {
     document.querySelector(".menu-list-li.pp").style.display = "none";
   }
 });
+
+// 추가버튼
 menuListAddBtn.addEventListener("click", (event) => {
   let valueTitle = document.getElementById("name");
   let valueAddress = document.getElementById("address");
@@ -63,23 +61,10 @@ menuListAddBtn.addEventListener("click", (event) => {
       address: valueAddress.value,
     };
     listDataResult.push(newArray);
+    resultDatas(listDataResult);
 
-    addListUl.insertAdjacentHTML(
-      "beforebegin",
-      `<li class='list-li'><span class='list-li-num'>${
-        listDataResult.length
-      }.</span>
-                <span class='text-box'><b>${newArray.title}</b></span>${
-        toggleCheck.checked
-          ? `<span>를 주문 할 사람은 <b>${newArray.address}</b> 입니다.</span>`
-          : ""
-      }
-      <img class='x-del-image' onclick='listDel(this,${countListNum})' src='./image/xicon.png' />          
-      </li>`
-    );
     valueTitle.value = "";
     valueAddress.value = "";
-    countListNum++;
   }
 });
 
@@ -138,23 +123,39 @@ addListOpen.addEventListener("click", (event) => {
   buttonWrap.style.display = "none";
 });
 
+/**
+ * 리스트 삭제
+ * @param {Number} targetIndex
+ */
+function listDel(targetIndex) {
+  listDataResult.splice(targetIndex, 1);
+  resultDatas(listDataResult);
+}
+
+/**
+ * 셋팅 어레이
+ * @param {Array} arrs
+ */
+function resultDatas(arrs) {
+  let div = "";
+  for (const dataList in arrs) {
+    div += `<li class='list-li'><span class='list-li-num'>${
+      Number(dataList) + 1
+    }.</span>
+              <span class='text-box'><b>${arrs[dataList].title}</b></span>${
+      toggleCheck.checked
+        ? `<span>를 주문 할 사람은 <b>${arrs[dataList].address}</b> 입니다.</span>`
+        : ""
+    }
+    <img class='x-del-image' onclick='listDel(${Number(
+      dataList
+    )})' src='./image/xicon.png' />
+    </li>`;
+  }
+  addListUl.innerHTML = div;
+}
+
 // 초기화
 reset.addEventListener("click", function () {
   window.location.reload(true);
 });
-
-// 리스트 삭제
-/**
- *
- * @param {dom} targetList
- * @param {dataSet} idx
- */
-function listDel(targetList, idx) {
-  listDataResult.splice(idx);
-  targetList.closest("li").remove();
-  const listlinum = document.querySelectorAll(".list-li-num");
-  for (let i = 0; i < listlinum.length; i++) {
-    listlinum[i].innerHTML = `${i + 1}. `;
-  }
-  countListNum--;
-}
