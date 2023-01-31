@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="./css/common.css">
     <title>점심추천기</title>
 </head>
+
 <body>
     <div class="wrap">
         <div class="asd">
-            <p class="title">MENU 추첨기v1.4</p>
+            <p class="title">MENU 추첨기v2.0</p>
             <div class="required">
                 빵셔틀 MODE
                 <label>
@@ -47,7 +48,32 @@
             <button id="menu-list-add-btn">추가</button>
             <button id="menu-list-add-btn-start">추첨시작</button>
         </div>
+        <div class="map-wrap">
+        <div id="map" style="width:100%;height:350px;"></div>
+        <button type="button" class="getBtn" id="getMyPositionBtn" onclick="getCurrentPosBtn()">내 위치
+            가져오기</button>
+        </div>
     </div>
+
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=538c57c14dc1a44b1d3dae9ab9e9632a&libraries=services"></script>
+
+    <script src="./js/js.js"></script>
+
 </body>
-<script src="./js/js.js"></script>
+<style>
+    .map-wrap{
+       width: 500px;
+       margin: 40px auto;
+       display: none;
+    }
+
+    @media (max-width:400px) {
+        .map-wrap {
+        max-width: 300px;
+        width: 100%;
+    }
+    }
+</style>
+
 </html>

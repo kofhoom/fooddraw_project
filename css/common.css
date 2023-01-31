@@ -37,6 +37,7 @@
     }
 
     .reset,
+    .getBtn,
     #select-button,
     #menu-list-add-btn-start,
     #menu-list-add-btn-close,
@@ -54,7 +55,12 @@
         box-shadow: 0px 3px 5px #00000047;
         transition: all 0.3s;
     }
+    .getBtn{
+        margin: 20px auto;
+        display: block;
+    }
 
+    .getBtn:hover,
     .reset:hover,
     #select-button:hover,
     #menu-list-add-btn-start:hover,
@@ -188,11 +194,13 @@
         color: #fff;
         font-size: 12px;
     }
+
     .reset:hover {
 
         background: #4d4d4d;
 
     }
+
     .asd {
         display: flex;
         margin-bottom: 58px;
@@ -279,19 +287,23 @@
         /* 켠 상태 스위치 위치 */
         left: 20px;
     }
-    .list-li{
-         display: flex;
-         justify-content: center;
-         align-items: center;
+
+    .list-li {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
+
     .list-li-num {
         display: inline-block;
         margin-right: 5px;
     }
-.text-box{
-    display: flex;
-    align-items: center;
-}
+
+    .text-box {
+        display: flex;
+        align-items: center;
+    }
+
     .x-del-image {
         height: 23px;
         display: inline-block;

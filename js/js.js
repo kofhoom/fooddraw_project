@@ -29,6 +29,7 @@ addListOpen.addEventListener("click", (event) => {
   buttonWrap.style.display = "none";
 });
 
+// 빵셔틀 버튼 활성화
 toggleCheck.addEventListener("click", () => {
   if (toggleCheck.checked) {
     document.querySelector(".menu-list-li.pp").style.display = "block";
@@ -41,12 +42,12 @@ toggleCheck.addEventListener("click", () => {
 menuListAddBtn.addEventListener("click", (event) => {
   let valueTitle = document.getElementById("name");
   let valueAddress = document.getElementById("address");
-  var blank_pattern = /^\s+|\s+$/g;
+  var blank_pattern = /^\s+|\s+$/g; //공백포함여부
   if (!valueTitle.value) {
     alert("음식 이름을 입력하세요");
     valueTitle.focus();
   } else if (valueTitle.value.replace(blank_pattern, "") == "") {
-    alert("음식 공백 입력은 불가능 합니다.");
+    alert("음식 공백 입력은 불가능 .");
     valueTitle.focus();
   } else if (!valueAddress.value && toggleCheck.checked) {
     alert("주문할 사람을 입력하세요");
@@ -55,7 +56,7 @@ menuListAddBtn.addEventListener("click", (event) => {
     valueAddress.value.replace(blank_pattern, "") == "" &&
     toggleCheck.checked
   ) {
-    alert("주문할 사람에 공백 입력은 불가능 합니다.");
+    alert("주문할 사람에 공백 입력은 불가능 .");
     valueAddress.focus();
   } else {
     addList.style.display = "block";
@@ -117,8 +118,10 @@ selButtons.addEventListener("click", (event) => {
     reset.style.display = "block";
 
     if (toggleCheck.checked && selectList?.address) {
-      menuAddress.innerHTML = `<p style='margin-bottom: 20px;'>주문할 사람은 <b>${selectList.address}</b> 입니다.</p>`;
+      menuAddress.innerHTML = `<p style='margin-bottom: 20px;'>주문할 사람은 <b>${selectList.address}</b> .</p>`;
     }
+    document.querySelector(".map-wrap").style.display = "block";
+    getCurrentPosBtn();
   } else {
     globalFrame = requestAnimationFrame(callback);
     targets.innerHTML = "추첨";
@@ -147,7 +150,7 @@ function resultDatas(arrs) {
     <span class='text-box'><b>${arrs[dataList].title}</b></span>
     ${
       toggleCheck.checked
-        ? `<span>를 주문 할 사람은 <b>${arrs[dataList].address}</b> 입니다.</span>`
+        ? `<span>를 주문 할 사람은 <b>${arrs[dataList].address}</b> .</span>`
         : ""
     }
     <img class='x-del-image' onclick='listDel(${Number(
@@ -158,7 +161,162 @@ function resultDatas(arrs) {
   addListUl.innerHTML = div;
 }
 
-// 초기화
+// 홈버튼
 reset.addEventListener("click", function () {
   window.location.reload(true);
 });
+
+var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+  mapOption = {
+    center: new kakao.maps.LatLng(37.56646, 126.98121), // 지도의 중심좌표
+    level: 5, // 지도의 확대 레벨
+    mapTypeId: kakao.maps.MapTypeId.ROADMAP, // 지도종류
+  };
+
+// 지도를 생성한다
+var map = new kakao.maps.Map(mapContainer, mapOption);
+
+var currentPos;
+
+function locationLoadSuccess(pos) {
+  // 현재 위치 받아오기
+  currentPos = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+
+  // 지도 이동(기존 위치와 가깝다면 부드럽게 이동)
+  map.panTo(currentPos);
+
+  // 마커 생성
+  var marker = new kakao.maps.Marker({
+    position: currentPos,
+  });
+
+  keywordSearch(selectListTargetText);
+
+  // 기존에 마커가 있다면 제거
+  marker.setMap(null);
+  marker.setMap(map);
+}
+
+function locationLoadError(pos) {
+  alert("위치 정보를 가져오는데 실패했습니다.");
+}
+
+// 위치 가져오기 버튼 클릭시
+function getCurrentPosBtn() {
+  navigator.geolocation.getCurrentPosition(
+    locationLoadSuccess,
+    locationLoadError
+  );
+}
+
+function keywordSearch(keyword) {
+  var markers = [];
+
+  // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성
+  var infowindow = new kakao.maps.InfoWindow({
+    zIndex: 1,
+  });
+
+  // 장소 검색 객체를 생성
+  var ps = new kakao.maps.services.Places(map);
+
+  // 검색 옵션 객체
+  var searchOption = {
+    location: currentPos,
+    radius: 1000,
+    size: 5,
+  };
+
+  // 장소검색 객체를 통해 키워드로 장소검색을 요청
+  ps.keywordSearch(keyword, placesSearchCB, searchOption);
+
+  // 장소검색이 완료됐을 때 호출되는 콜백함수
+  function placesSearchCB(data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+      // 정상적으로 검색이 완료됐으면
+      // 검색 목록과 마커를 표출
+      displayPlacesOnSidebar(data);
+    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+      alert("추첨 결과가 존재하지 않습니다.");
+      return;
+    } else if (status === kakao.maps.services.Status.ERROR) {
+      alert("추첨 결과 중 오류가 발생했습니다.");
+      return;
+    }
+  }
+
+  // 사이드바에 결과 출력 + 마커 생성
+  function displayPlacesOnSidebar(places) {
+    var bounds = new kakao.maps.LatLngBounds();
+
+    // 지도에 표시되고 있는 마커를 제거
+    removeMarker();
+
+    for (var i = 0; i < places.length; i++) {
+      // 마커를 생성하고 지도에 표시
+      var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
+      var marker = addMarker(placePosition, i);
+
+      // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+      // LatLngBounds 객체에 좌표를 추가
+      bounds.extend(placePosition);
+
+      // 마커와 검색결과 항목에 mouseover 했을때
+      // 해당 장소에 인포윈도우에 장소명을 표시
+      // mouseout 했을 때는 인포윈도우를 닫습니다
+      (function (marker, title) {
+        kakao.maps.event.addListener(marker, "mouseover", function () {
+          displayInfowindow(marker, title);
+        });
+
+        kakao.maps.event.addListener(marker, "mouseout", function () {
+          infowindow.close();
+        });
+      })(marker, places[i].place_name);
+    }
+
+    // 검색결과 항목들을 검색결과 목록 Element에 추가
+
+    // 검색된 장소 위치를 기준으로 지도 범위를 재설정
+    map.setBounds(bounds);
+  }
+
+  // 마커를 생성하고 지도 위에 마커를 표시하는 함수
+  function addMarker(position, idx, title) {
+    var imageSrc =
+        "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+      imageSize = new kakao.maps.Size(36, 37), // 마커 이미지의 크기
+      imgOptions = {
+        spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+        spriteOrigin: new kakao.maps.Point(0, idx * 46 + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+        offset: new kakao.maps.Point(13, 37), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+      },
+      markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+      marker = new kakao.maps.Marker({
+        position: position, // 마커의 위치
+        image: markerImage,
+      });
+
+    marker.setMap(map); // 지도 위에 마커를 표출
+    markers.push(marker); // 배열에 생성된 마커를 추가
+
+    return marker;
+  }
+
+  // 지도 위에 표시되고 있는 마커를 모두 제거
+  function removeMarker() {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+    markers = [];
+  }
+
+  // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수
+  // 인포윈도우에 장소명을 표시
+  function displayInfowindow(marker, title) {
+    var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
+
+    infowindow.setContent(content);
+    infowindow.open(map, marker);
+  }
+}
