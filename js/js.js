@@ -190,11 +190,10 @@ function locationLoadSuccess(pos) {
     position: currentPos,
   });
 
-  keywordSearch(selectListTargetText);
-
-  // 기존에 마커가 있다면 제거
   marker.setMap(null);
+  // 기존에 현재위치 마커가 있다면 제거
   marker.setMap(map);
+  keywordSearch(selectListTargetText);
 }
 
 function locationLoadError(pos) {
@@ -235,6 +234,7 @@ function keywordSearch(keyword) {
     if (status === kakao.maps.services.Status.OK) {
       // 정상적으로 검색이 완료됐으면
       // 검색 목록과 마커를 표출
+
       displayPlacesOnSidebar(data);
     } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
       alert("추첨 결과가 존재하지 않습니다.");
@@ -314,7 +314,12 @@ function keywordSearch(keyword) {
   // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수
   // 인포윈도우에 장소명을 표시
   function displayInfowindow(marker, title) {
-    var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
+    // infowindow.close();
+
+    var content =
+      '<div class="info-windows" style="padding:5px;z-index:1;">' +
+      title +
+      "</div>";
 
     infowindow.setContent(content);
     infowindow.open(map, marker);
