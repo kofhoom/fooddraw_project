@@ -104,14 +104,17 @@ let callback = function () {
   }
 };
 
-// 추첨버튼 클릭시
+// 추첨버튼
 selButtons.addEventListener("click", (event) => {
   const targets = event.target;
   const buttonValueText = targets.innerHTML;
 
   if (buttonValueText == "추첨") {
+    // 추첨버튼 클릭시
+    document.body.classList.add("active");
     selectImportantText.style.display = "none";
     targets.innerHTML = "재추첨";
+
     cancelAnimationFrame(globalFrame);
 
     menuTitle.innerHTML = `<p>${selectListTargetText}</p><p style='font-size:15px;'>입니다!</p>`;
@@ -121,11 +124,28 @@ selButtons.addEventListener("click", (event) => {
       menuAddress.innerHTML = `<p style='margin-bottom: 20px;'>주문할 사람은 <b>${selectList.address}</b> .</p>`;
     }
     document.querySelector(".map-wrap").style.display = "block";
-    getCurrentPosBtn();
+
+    getCurrentPosBtn(); // map 생성
   } else {
+    // 재추첨 버튼 클릭시
+    document.body.classList.remove("active");
+    document.querySelector(".map-wrap").style.display = "none";
+
+    selectImportantText.style.display = "block";
+    reset.style.display = "none";
+
     globalFrame = requestAnimationFrame(callback);
     targets.innerHTML = "추첨";
     menuAddress.innerText = "";
+
+    // 마커 초기화
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+    markers = [];
+
+    // 인포창 초기화
+    infowindow.close();
   }
 });
 
@@ -165,18 +185,24 @@ function resultDatas(arrs) {
 reset.addEventListener("click", function () {
   window.location.reload(true);
 });
+markers = [];
 
 var mapContainer = document.getElementById("map"), // 지도를 표시할 div
   mapOption = {
     center: new kakao.maps.LatLng(37.56646, 126.98121), // 지도의 중심좌표
-    level: 5, // 지도의 확대 레벨
+    level: 5, // 지도의 확대 레벨 디폴트 셋팅
     mapTypeId: kakao.maps.MapTypeId.ROADMAP, // 지도종류
   };
 
 // 지도를 생성한다
 var map = new kakao.maps.Map(mapContainer, mapOption);
+// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성
 
-var currentPos;
+var infowindow = new kakao.maps.InfoWindow({
+  zIndex: 1,
+});
+
+var currentPos; // 현재 위치를 담을 변수
 
 function locationLoadSuccess(pos) {
   // 현재 위치 받아오기
@@ -209,13 +235,6 @@ function getCurrentPosBtn() {
 }
 
 function keywordSearch(keyword) {
-  var markers = [];
-
-  // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성
-  var infowindow = new kakao.maps.InfoWindow({
-    zIndex: 1,
-  });
-
   // 장소 검색 객체를 생성
   var ps = new kakao.maps.services.Places(map);
 
@@ -229,7 +248,13 @@ function keywordSearch(keyword) {
   // 장소검색 객체를 통해 키워드로 장소검색을 요청
   ps.keywordSearch(keyword, placesSearchCB, searchOption);
 
-  // 장소검색이 완료됐을 때 호출되는 콜백함수
+  /**
+   * 장소검색이 완료됐을 때 호출되는 콜백함수
+   * @param {Array} data 검색된 데이터
+   * @param {String} status 검색 완료 상태
+   * @param {Number} pagination 페이지 번호
+   * @returns
+   */
   function placesSearchCB(data, status, pagination) {
     if (status === kakao.maps.services.Status.OK) {
       // 정상적으로 검색이 완료됐으면
@@ -264,18 +289,16 @@ function keywordSearch(keyword) {
       // 마커와 검색결과 항목에 mouseover 했을때
       // 해당 장소에 인포윈도우에 장소명을 표시
       // mouseout 했을 때는 인포윈도우를 닫습니다
-      (function (marker, title) {
+      (function (marker, places) {
         kakao.maps.event.addListener(marker, "click", function () {
-          displayInfowindow(marker, title);
+          displayInfowindow(marker, places);
         });
 
         // kakao.maps.event.addListener(marker, "mouseout", function () {
         //   infowindow.close();
         // });
-      })(marker, places[i].place_name);
+      })(marker, places[i]);
     }
-
-    // 검색결과 항목들을 검색결과 목록 Element에 추가
 
     // 검색된 장소 위치를 기준으로 지도 범위를 재설정
     map.setBounds(bounds);
@@ -313,12 +336,10 @@ function keywordSearch(keyword) {
 
   // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수
   // 인포윈도우에 장소명을 표시
-  function displayInfowindow(marker, title) {
-    // infowindow.close();
-
+  function displayInfowindow(marker, places) {
     var content =
       '<div class="info-windows" style="padding:5px;z-index:1;">' +
-      title +
+      places.place_name +
       "</div>";
 
     infowindow.setContent(content);
