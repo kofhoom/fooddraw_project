@@ -252,7 +252,7 @@ function keywordSearch(keyword) {
   var searchOption = {
     location: currentPos,
     radius: 1000,
-    size: 5,
+    size: 15,
   };
 
   // 장소검색 객체를 통해 키워드로 장소검색을 요청
