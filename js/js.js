@@ -215,6 +215,7 @@ var currentPos; // 현재 위치를 담을 변수
 
 function locationLoadSuccess(pos) {
   // 현재 위치 받아오기
+  currentPos = "";
   currentPos = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
 
   // 지도 이동(기존 위치와 가깝다면 부드럽게 이동)
@@ -285,8 +286,13 @@ function keywordSearch(keyword) {
 
     // 지도에 표시되고 있는 마커를 제거
     removeMarker();
-
+    let newLength = [];
     for (var i = 0; i < places.length; i++) {
+      newLength.push(places[i]);
+      document.querySelector(
+        ".totalnum"
+      ).innerHTML = `<span style="font-weight: bold; font-size:12px; margin-bottom:10px;">검색결과: ${newLength.length}곳</span>`; //검색 결과 개수
+
       // 마커를 생성하고 지도에 표시
       var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
       var marker = addMarker(placePosition, i);
@@ -347,11 +353,20 @@ function keywordSearch(keyword) {
   // 인포윈도우에 장소명을 표시
   function displayInfowindow(marker, places) {
     var content =
-      '<div class="info-windows" style="padding:5px;z-index:1;">' +
+      '<div class="info-windows" style="padding:5px;z-index:1;"><p style="font-weight: bold;">' +
       places.place_name +
-      "</div>";
+      "</p><p style='font-size: 13px;'>" +
+      places.road_address_name +
+      "</p><p style='font-size:12px; margin-top: 3px;'>" +
+      places.phone +
+      "</p></div>";
 
     infowindow.setContent(content);
     infowindow.open(map, marker);
+    console.dir(infowindow.a);
+    infowindow.a.style.height = `${places?.phone ? "67px" : "54px"}`;
+    infowindow.a.style.width = "211px";
+    infowindow.a.style.borderRadius = "5px";
+    infowindow.a.style.border = "1px solid #d78f00";
   }
 }
